@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { AlignLeft, AlignCenter } from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { Toaster } from './components/ui/sonner';
 import svgPaths from '../imports/RpgBioSyntaxTool-1/svg-iwnjnkfi4o';
 
