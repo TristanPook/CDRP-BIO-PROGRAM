@@ -851,7 +851,7 @@ Selected text: "${selection.toString()}"`;
                 ref={formattedRef}
                 contentEditable
                 onInput={handleInput}
-                className="absolute inset-0 bg-[#444] p-[13.145px] outline-none overflow-y-scroll"
+                className="editor-scroll absolute inset-0 bg-[#444] p-[13.145px] outline-none overflow-y-scroll"
                 style={{
                   lineHeight: '1.5',
                   whiteSpace: 'pre-wrap',
@@ -940,7 +940,7 @@ Selected text: "${selection.toString()}"`;
               ref={syntaxRef}
               value={syntaxText}
               onChange={(e) => setSyntaxText(e.target.value)}
-              className="absolute inset-0 w-full h-full bg-[#444] p-[14.364px] resize-none outline-none overflow-y-scroll"
+              className="editor-scroll absolute inset-0 w-full h-full bg-[#444] p-[14.364px] resize-none outline-none overflow-y-scroll"
               style={{
                 fontFamily: 'Consolas, monospace',
                 fontSize: '14px',

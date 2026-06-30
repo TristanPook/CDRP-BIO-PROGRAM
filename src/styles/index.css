@@ -4,3 +4,25 @@
 @import 'tw-animate-css';
 @import './default_theme.css';
 @import './globals.css';
+
+/* Scrollbar styling for the formatted editor and CDRP textarea */
+.editor-scroll::-webkit-scrollbar,
+.editor-scroll textarea::-webkit-scrollbar {
+  width: 8px;
+}
+.editor-scroll::-webkit-scrollbar-track,
+.editor-scroll textarea::-webkit-scrollbar-track {
+  background: #2b2b2b;
+}
+.editor-scroll::-webkit-scrollbar-thumb,
+.editor-scroll textarea::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+.editor-scroll::-webkit-scrollbar-thumb:hover,
+.editor-scroll textarea::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+.editor-scroll {
+  scrollbar-color: #555 #2b2b2b;
+}
