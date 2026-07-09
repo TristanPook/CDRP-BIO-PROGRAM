@@ -129,6 +129,20 @@ export default function App() {
     let hasFormatting = false;
 
     for (const { char, color, font } of chars) {
+      // Newlines carry no visible styling — emit without a tag, don't update state.
+      if (char === '\n') {
+        code += char;
+        continue;
+      }
+
+      // Pressstart spaces have no visual color difference — emit without a tag,
+      // don't update state. Silkscreen spaces have a different width so they
+      // go through normal tag-emission logic to preserve the font.
+      if (char === ' ' && font !== 'silkscreen') {
+        code += char;
+        continue;
+      }
+
       const colorChanged = color !== sColor;
       const fontChanged = font !== sFont;
 
@@ -492,6 +506,16 @@ Selected text: "${selection.toString()}"`;
     updateDebugInfo(html, segs);
   };
 
+  // When either dynamic font size changes (resize), update all existing spans in the editor
+  useEffect(() => {
+    if (!formattedRef.current) return;
+    formattedRef.current.querySelectorAll<HTMLSpanElement>('span').forEach(span => {
+      const ff = span.style.fontFamily;
+      if (ff.includes('Press Start 2P')) span.style.fontSize = `${pressStartFontSize}px`;
+      else if (ff.includes('Silkscreen')) span.style.fontSize = `${silkscreenFontSize}px`;
+    });
+  }, [pressStartFontSize, silkscreenFontSize]);
+
   // Ctrl+Z / Ctrl+Y undo-redo for the formatted editor
   useEffect(() => {
     const editor = formattedRef.current;
@@ -504,14 +528,19 @@ Selected text: "${selection.toString()}"`;
       if (e.key === 'z' && !e.shiftKey) {
         e.preventDefault();
         const stack = undoStack.current;
-        if (stack.length <= 1) return;
-        redoStack.current.push(stack.pop()!);
-        restoreHTML(stack[stack.length - 1] ?? '');
+        if (stack.length === 0) return;
+        // Save current live state to redo before restoring
+        const currentHtml = formattedRef.current!.innerHTML;
+        redoStack.current.push(currentHtml);
+        const prev = stack.pop()!;
+        restoreHTML(prev);
       } else if (e.key === 'y' || (e.key === 'z' && e.shiftKey)) {
         e.preventDefault();
         const next = redoStack.current.pop();
         if (next === undefined) return;
-        undoStack.current.push(next);
+        // Save current live state to undo before redoing
+        const currentHtml = formattedRef.current!.innerHTML;
+        undoStack.current.push(currentHtml);
         restoreHTML(next);
       }
     };
@@ -725,13 +754,17 @@ Selected text: "${selection.toString()}"`;
       {/* Title */}
       <div className="flex flex-col items-center gap-[11px]">
         <p
-          className="text-[24px] leading-5 text-center whitespace-nowrap"
+          contentEditable
+          suppressContentEditableWarning
+          className="text-[24px] leading-5 text-center whitespace-nowrap outline-none"
           style={{ fontFamily: '"Arial Black", Arial, sans-serif', color: '#3aaa12', letterSpacing: '2.4px' }}
+          onInput={(e) => { document.title = e.currentTarget.textContent || 'CDRP: BIO PROGRAM'; }}
+          onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }}
         >
           CDRP: BIO PROGRAM
         </p>
         <p className="text-[14px] text-[#0a0a0a] font-normal text-center leading-[21px]" style={{ fontFamily: 'Inter, sans-serif' }}>
-          V2.0.0 by TristanPook
+          V2.1.0 by TristanPook
         </p>
       </div>
 
